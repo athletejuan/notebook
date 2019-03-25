@@ -1,0 +1,23 @@
+﻿http://stat-computing.org/dataexpo/2009/the-data.html
+
+$ wget http://stat-computing.org/dataexpo/2009/{1987..2008}.csv.bz2
+$ bzip2 -d *.bz2
+$ du -sh
+$ du -a
+sed -e '1d' 1987.csv > 1987_new.csv
+sed -e '1d' 1988.csv > 1988_new.csv
+sed -e '1d' 1989.csv > 1989_new.csv
+sed -e '1d' 1990.csv > 1990_new.csv
+sed -e '1d' 1991.csv > 1991_new.csv
+sed -e '1d' 1992.csv > 1992_new.csv
+sed -e '1d' 1993.csv > 1993_new.csv
+sed -e '1d' 1994.csv > 1994_new.csv
+sed -e '1d' 1995.csv > 1995_new.csv
+sed -e '1d' 1996.csv > 1996_new.csv
+sed -e '1d' 1997.csv > 1997_new.csv
+sed -e '1d' 1998.csv > 1998_new.csv
+
+pscp -pw Pa$$w0rd2019 C:\Share\20190325\hadoop-examples.jar sshuser@<hdcluster name>-ssh.azurehdinsight.net:/home/sshuser
+
+yarn jar hadoop-examples.jar test.hadoop.sample05.DepartureDelayCount /user/sshuser DelayCount
+

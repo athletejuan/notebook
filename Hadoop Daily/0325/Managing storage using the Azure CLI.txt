@@ -1,0 +1,27 @@
+Managing storage using the Azure CLI
+
+1. Open a command prompt
+2. azure login
+3. Select y to enable data collection, press n
+4. visiting -> https://aka.ms/devicelogin
+5. azure account list
+6. azure account set "<Subsciption Name>"
+7. azure provider register --namespace Microsoft.DataLakeStore
+8. azure group create -l eastus2 -n <RGName>
+9. azure storage account create -l eastus2 -g <RGName> --sku-name GRS --kind BlobStorage --access-tier Hot <storageaccountname>
+10. azure storage account connectionstring show <storageaccountname> --g <RGName>
+11. azure storage container create clidata --connection-string <ConnectionString>
+12. ex) Navigate to E:\Demofiles\Mod04\clidata\hvac
+13. azure storage blob upload -f HVAC.csv --container clidate -c <ConnectionString>
+14. azure storage blob list --container clidata -c <ConnectionString>
+15. ex) Navigate to E:\Demofiles\Mod04\clidata\Building
+16. azure storage blob upload -f building.csv --container clidata -c <ConnectionString>
+17. azure storage blob list --container clidata -c <ConnectionString>
+18. upload hvac/HVAC.csv and building/building.csv
+19. azure datalake store account create -n <ADLSName> -l eastus2 -g <RGName>
+20. ex) Navigate to E:\Demofiles\Mod04\clidata\hvac
+21. azure datalake store filesystem import -n <ADLSName> -p HVAC.csv -d clidata/hvac/hvac.csv
+22. Azure datalake store filesystem list -n <ADLSName> -p dlicata/hvac
+23. azure group delete -n <RGName>
+24. To confirm the deletion, at the prompt,press y.
+25. Close
