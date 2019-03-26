@@ -1,0 +1,75 @@
+﻿INSERT INTO TABLE employee VALUES(1, 'Tom', 2000);
+SELECT * FROM employee;
+
+$ tar xvfz spark-2.3.3-bin-hadoop2.7.tgz
+$ cd spark-2.3.3-bin-hadoop2.7
+$ cd conf
+$ cp spark-env.sh.template spark-env.sh
+$ cd ~/spark-2.3.3-bin-hadoop2.7/bin
+$ cp slaves.template slaves
+server10
+server12
+$ cd ~
+$ scp -r spark-2.3.3-bin-hadoop2.7 server10:/home/hadoop/
+$ scp -r spark-2.3.3-bin-hadoop2.7 server12:/home/hadoop/
+$ cd ~/spark-2.3.3-bin-hadoop2.7/sbin
+
+http://server11:8080
+http://server11:4040
+bin/spark-shell --master spark://server11:7077
+
+http://server01:8080/ -> Spark Master UI
+http://server01:4040/ -> Spark Application UI
+
+$ spark-shell
+
+scala> val inputfile = sc.textFile("input.txt")
+scala> val counts = inputfile.flatMap(line => line.split(",")).map(word => (word, 1)).reduceByKey(_+_);
+scala> counts.toDebugString
+scala> counts.cache()
+scala> counts.saveAsTextFile("output2")
+scala> :q
+
+
+SparkWordCount.scala
+import org.apache.spark.SparkContext 
+import org.apache.spark.SparkContext._ 
+import org.apache.spark._  
+
+object SparkWordCount { 
+   def main(args: Array[String]) { 
+
+      val sc = new SparkContext( "local", "Word Count", "/usr/local/spark", Nil, Map(), Map()) 
+		
+      /* local = master URL; Word Count = application name; */  
+      /* /usr/local/spark = Spark Home; Nil = jars; Map = environment */ 
+      /* Map = variables to work nodes */ 
+      /*creating an inputRDD to read text file (in.txt) through Spark context*/ 
+      val input = sc.textFile("in.txt") 
+      /* Transform the inputRDD into countRDD */ 
+		
+      valcount = input.flatMap(line ⇒ line.split(" ")) 
+      .map(word ⇒ (word, 1)) 
+      .reduceByKey(_ + _) 
+       
+      /* saveAsTextFile method is an action that effects on the RDD */  
+      count.saveAsTextFile("outfile") 
+      System.out.println("OK"); 
+   } 
+} 
+
+$ scalac -classpath "spark-core_2.xxxx.jar:/usr/local/spark/lib/spark-assembly-x.x.x-hadoop2.7.3.jar" SparkPi.scala
+jar -cvf wordcount.jar SparkWordCount*.class spark-core_2.x.jar/usr/local/spark/lib/spark-assembly-x.x.x-hadoop2.7.3.jar
+spark-submit --class SparkWordCount --master local wordcount.jar
+
+* Pyspark (WordCount)
+test = sc.textFile("README.md") 
+counts = test.flatMap(lambda line: line.split(" ")).map(lambda word: (word,1)).reduceByKey(lambda a, b: a+b)
+
+wasb://<clustername>@<storageaccountname>.blob.core.windows.net/user/livy/ab40thv.txt
+
+wasb://<clustername>@<storageaccountname>.blob.core.windows.net/HdiNotebooks/<Foldername>/ab40thv.txt
+
+test = sc.textFile("wasb://<clustername>@<storageaccountname>.blob.core.windows.net/HdiNotebooks/<Foldername>/ab40thv.txt") 
+
+counts = test.flatMap(lambda line: line.split(" ")).map(lambda word: (word,1)).reduceByKey(lambda a, b: a+b)
