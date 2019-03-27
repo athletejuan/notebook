@@ -1,0 +1,5 @@
+baby_names = sqlContext.read.format("com.databricks.spark.csv").options(header='true', inferschema='true').load('wasb://juan0327container@juanstorageaccount.blob.core.windows.net/user/sshuser/baby_names.csv')
+
+baby_names.registerTempTable("baby_names")
+result = sqlContext.sql("select * from baby_names")
+result.show()

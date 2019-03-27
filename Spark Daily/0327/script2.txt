@@ -1,0 +1,33 @@
+spark-submit wordcount.py
+
+df = spark.read.json("wasb:///user/sshuser/Cars.json", multiLine=True)
+df.show()
+df2 = df.toPandas()
+type(df2)
+
+from pyspark.sql import SparkSession
+
+spark2 = SparkSession \
+    .builder \
+    .appName("MySpark") \
+    .config("spark.executor.memory","2G") \
+    .getOrCreate()
+    
+df = spark2.read.json("wasb:///user/sshuser/Cars.json", multiLine=True)
+df2 = df.toPandas()
+df.show()
+df.select("name").show()
+df.select(df['name'], df['speed']).show()
+df.filter(df['speed'] > 100).show()
+df.filter(df['speed'] > 100).count()
+
+df.select("name").show()
+df.select(df['name'], df['speed']).show()
+df.filter(df['speed'] > 100).show()
+df.filter(df['speed'] > 100).count()
+df.groupby("name").count().show()
+df.createOrReplaceTempView("Cars")
+
+df4 = spark2.sql("select * from Cars")
+
+type(df4)
