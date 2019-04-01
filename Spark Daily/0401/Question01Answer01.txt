@@ -1,0 +1,64 @@
+﻿1. 제공된 VideoShop.sql파일을 이용하여 
+MS Sql Server에 VideoShop을 생성하고
+Sqoop을 사용하여 VS_TAPE을 HDFS에 Import/Export하는 식을 작성하시오.
+
+* 접속확인
+
+* Microsoft Sql Server
+./bin/sqoop list-databases --connect jdbc:sqlserver://70.12.114.137:1433 --username 'sa' --password '********'
+
+./bin/sqoop import --connect 'jdbc:sqlserver://70.12.114.137:1433;database=VideoShop' --username 'sa' --password '********' --table VS_CUSTOMER -m 1 --target-dir /user/hadoop/sqoopMsSqlToHdfs
+
+./bin/sqoop import --connect 'jdbc:sqlserver://70.12.114.137:1433;database=VideoShop' --username 'sa' --password '********' --table VS_TAPE -m 1 --target-dir /user/hadoop/sqoopMsSqlToHdfs2
+
+./bin/sqoop export --connect 'jdbc:sqlserver://70.12.114.137:1433;database=VideoShop' --username 'sa' --password '********' --table VS_CUSTOMER3 -m 1 --export-dir /user/hadoop/sqoopMsSqlToHdfs/part-m-00000
+
+2. Flume에서 Sequence Generator Source
+를 사용하여 HDFS에 로그를 생성하시오.
+./bin/flume-ng agent --conf-file conf/flume-conf.properties -n agent -Dflume.root.logger=INFO,console
+
+3.전국 커피숍 년도별 폐업건수를 출력하시오.
+  (coffee.csv파일)
+df <- read.csv("coffee.csv")
+head(df)
+df2 <- table(df[which(df$stateOfbusiness == "폐업 등"),15])
+df2_1 <- as.data.frame(df2)
+df2_1
+qplot(df2_1$Var1, df2_1$Freq)
+
+4.연령대별로 암의 발생률을 구하고 그래프로 출력하시오.
+  (cancer.csv파일)
+df <- read.csv("cancer.csv")
+str(df)
+age_data <- table(cut(df$age, breaks = (1:11)*10))
+age_data
+
+rownames(age_data) <- c('10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s', '100s')
+age_data
+hist(age_data)
+
+5. Apache Spark으로 WordCount 처리하시오.
+  (ab40thv.txt파일)
+*HDFS Start()
+ $ ./bin/pyspark --master spark://server10:7077  
+ http://server10:8080/
+ $ bin/hadoop fs -mkdir /user/hadoop/spark_data
+ $ bin/hadoop fs -put ~/ab40thv.txt /user/hadoop/spark_data/
+ $ bin/hadoop fs -put ~/baby_names.csv /user/hadoop/spark_data/
+ $ bin/hadoop fs -ls /user/hadoop/spark_data
+
+test = sc.textFile("hdfs://server10:9000/user/hadoop/spark_data/ab40thv.txt") 
+counts = test.flatMap(lambda line: line.split(" ")).map(lambda word: (word,1)).reduceByKey(lambda a, b: a+b)
+counts.collect()
+
+6. Apache Spark를 사용하여 제공하는 baby_names의 데이터를 이용하여 년도별,성별 아기 출생건수를 구하시오.
+  (baby_names.csv파일)
+$ ./bin/pyspark --master spark://server10:7077  
+
+ >>> baby_names = sqlContext.read.format("com.databricks.spark.csv").options(header='true', inferschema='true').load('hdfs://server10:9000/user/hadoop/spark_data/baby_names.csv')
+
+ >>> baby_names.registerTempTable("baby_names")
+ >>> result = sqlContext.sql("select * from baby_names")
+ >>> result.show()
+ >>> result2 = sqlContext.sql("select Year, Sex, count(*) FROM baby_names group by Year, Sex")
+ >>> result2.show()
