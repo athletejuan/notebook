@@ -1,0 +1,18 @@
+{% extends 'bs/base.html' %}
+{% block body %}
+<h1 class="text-center">INTRO</h1>
+<hr>
+    {% for history in bss %}
+    <p>{{ history.pk }}번 모임</p>
+    <p>모임명: {{ history.title }}</p>
+    <a href="{% url 'bs:detail' history.pk %}">[모임 상세보기]</a>
+    <hr>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'bs:new' %}">[새 모임]</a>
+    {% else %}
+    <a href="{% url 'accounts:login' %}">[Log in First]</a>
+    {% endif %}
+    <hr>
+{% endblock %}
